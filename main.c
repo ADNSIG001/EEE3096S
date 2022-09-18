@@ -48,15 +48,15 @@ typedef struct {
 //TO DO:
 //TASK 2
 //Give DELAY1 and DELAY2 sensible values
-#define DELAY1 3000
+#define DELAY1 3000 // defining the delay time using the frequency on the oscilloscope to create a one second delay.
 #define DELAY2 1000
 
 //TO DO:
 //TASK 4
 //Define the RTC slave address
-#define DS3231_ADDRESS 0xD0
+#define DS3231_ADDRESS 0xD0 // defining the slave address in order for the information to be transffered from the RTC to the STM and visa versa
 
-#define EPOCH_2022 1640988000
+#define EPOCH_2022 1640988000 // the Eposch time given is set 
 
 /* USER CODE END PD */
 
@@ -85,13 +85,13 @@ static void MX_DMA_Init(void);
 static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 void HAL_UART_TxCpltCllback(UART_HandleTypeDef *huart);
-void pause_sec(float x);
+void pause_sec(float x); // pausing for one second
 
-uint8_t decToBcd(int val);
-int bcdToDec(uint8_t val);
-void setTime (uint8_t sec, uint8_t min, uint8_t hour, uint8_t dow, uint8_t dom, uint8_t month, uint8_t year);
+uint8_t decToBcd(int val); // taking in integers to be converted from decimal to binary
+int bcdToDec(uint8_t val); //taking in binary and converting into decimal
+void setTime (uint8_t sec, uint8_t min, uint8_t hour, uint8_t dow, uint8_t dom, uint8_t month, uint8_t year); // setting the time with the stanard format for time including date and years
 void getTime (void);
-int epochFromTime(TIME time);
+int epochFromTime(TIME time); // the Epoch time created being called 
 
 /* USER CODE END PFP */
 
@@ -108,7 +108,7 @@ int main(void){
 
   /* USER CODE BEGIN 1 */
 
-	setTime(00, 00, 12, 6, 22, 1, 22);
+	setTime(00, 00, 12, 6, 22, 1, 22); // the time being set to a given date that will be used to compute the time since the eopch time 
 
   /* USER CODE END 1 */
 
@@ -152,15 +152,16 @@ int main(void){
 	//TO DO:
 	//TASK 1
 	//First run this with nothing else in the loop and scope pin PC8 on an oscilloscope
-	HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_8);
+	HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_8); // toggling the pin 8 in the STM to record the frequency and period on the oscilloscope 
 
 
 		getTime();
-		sprintf(buffer, "%02d:%02d:%02d", time.hour, time.minutes, time.seconds);
-		HAL_UART_Transmit(&huart2, buffer, sizeof(buffer), 1000);
+		sprintf(buffer, "%02d:%02d:%02d", time.hour, time.minutes, time.seconds); // printing the time in the fomat desired to putty
+		HAL_UART_Transmit(&huart2, buffer, sizeof(buffer), 1000); // transmitting the information to be displayed on putty
 
-		sprintf(buffer, "%02d-%02d-20%02d", time.dayofmonth, time.month, time.year);
-		HAL_UART_Transmit(&huart2, buffer, sizeof(buffer), 1000);
+		sprintf(buffer, "%02d-%02d-20%02d", time.dayofmonth, time.month, time.year); // including the dya of month, month and year 
+		HAL_UART_Transmit(&huart2, buffer, sizeof(buffer), 1000); // displaying the information into putty
+	  // the format above was used to present the information neatly in putty
  pause_sec(1);
 
 	//TO DO:
@@ -171,7 +172,7 @@ int main(void){
 //
 //	//Transmit data via UART
 //	//Blocking! fine for small buffers
-	HAL_UART_Transmit(&huart2, buffer, sizeof(buffer), 1000);
+	HAL_UART_Transmit(&huart2, buffer, sizeof(buffer), 1000); // creating the uart buffer
 //
 
 
@@ -368,9 +369,9 @@ void pause_sec(float x)
 	//TO DO:
 	//TASK 2
 	//Make sure you've defined DELAY1 and DELAY2 in the private define section
-	for (int count =0; count<x;count++){
-		for(int a=0; a< DELAY1; a++){
-		for(int b=0; b< DELAY2; b++){}
+	for (int count =0; count<x;count++){ // creating the delay for 1 or 60 seconds 
+		for(int a=0; a< DELAY1; a++){ // by creating a loop within a loop, two numbers are multiplied by one another to aheive the delay
+		for(int b=0; b< DELAY2; b++){} // running though both loops while the variale is smaller than the set delay, for one and two
 		}}
 
 }
@@ -380,7 +381,7 @@ uint8_t decToBcd(int val)
 	 /* Convert normal decimal numbers to binary coded decimal*/
 		//TO DO:
 		//TASK 3
-	return (uint8_t)(val/10*16)+(val%10);
+	return (uint8_t)(val/10*16)+(val%10); // converting decimals into binary code 
 }
 
 
@@ -392,7 +393,7 @@ int bcdToDec(uint8_t val)
 	//Complete the BCD to decimal function
 
 	//YOUR CODE HERE
-	return (int) (val/16*10)+(val%16);
+	return (int) (val/16*10)+(val%16); // converting binary to decimal 
 
 }
 
@@ -456,7 +457,8 @@ int epochFromTime(TIME time){
 	//It is define above as EPOCH_2022. You can work from that and ignore the effects of leap years/seconds
 
 	//YOUR CODE HERE
-
+// creating the numbers that will fill the day and time by creating a switch function that will runn though the months starting with january and ending with december and 
+// according to the month number ther number of days in the month is added to days int.
 	int day;
 	int months = time.month;
 	//int EPOCH_2022;
@@ -488,11 +490,11 @@ int epochFromTime(TIME time){
 	 */
 
 	default:
-		day = day;
+		day = day; // redeclaring day integer 
 	}
 
-	int uet = (time.year-22)* 31536000 + (time.dayofmonth + day) * 86400 + (time.hour) * 3600 + (time.minutes) * 60 + (time.seconds);
-	return EPOCH_2022 + uet;
+	int uet = (time.year)* 31536000 + (time.dayofmonth + day) * 86400 + (time.hour) * 3600 + (time.minutes) * 60 + (time.seconds);  // multipling the time in seconds per the variable 
+	return EPOCH_2022 + uet; // therefore adding the epoch time and the time since is returned 
 }
 
 /* USER CODE END 4 */
