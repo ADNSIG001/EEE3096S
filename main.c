@@ -56,7 +56,7 @@ typedef struct {
 //Define the RTC slave address
 #define DS3231_ADDRESS 0xD0 // defining the slave address in order for the information to be transffered from the RTC to the STM and visa versa
 
-#define EPOCH_2022 1640988000 // the Eposch time given is set 
+#define EPOCH_2022 1640988000 // the Epoch time given is set 
 
 /* USER CODE END PD */
 
@@ -89,7 +89,7 @@ void pause_sec(float x); // pausing for one second
 
 uint8_t decToBcd(int val); // taking in integers to be converted from decimal to binary
 int bcdToDec(uint8_t val); //taking in binary and converting into decimal
-void setTime (uint8_t sec, uint8_t min, uint8_t hour, uint8_t dow, uint8_t dom, uint8_t month, uint8_t year); // setting the time with the stanard format for time including date and years
+void setTime (uint8_t sec, uint8_t min, uint8_t hour, uint8_t dow, uint8_t dom, uint8_t month, uint8_t year); // setting the time with the standard format for time including date and years
 void getTime (void);
 int epochFromTime(TIME time); // the Epoch time created being called 
 
@@ -108,7 +108,7 @@ int main(void){
 
   /* USER CODE BEGIN 1 */
 
-	setTime(00, 00, 12, 6, 22, 1, 22); // the time being set to a given date that will be used to compute the time since the eopch time 
+	setTime(00, 00, 12, 6, 22, 1, 22); // the time being set to a given date that will be used to compute the time since the Epoch time 
 
   /* USER CODE END 1 */
 
@@ -404,18 +404,18 @@ void setTime (uint8_t sec, uint8_t min, uint8_t hour, uint8_t dow, uint8_t dom, 
 	//TASK 4
 
 	//YOUR CODE HERE
-
+	//setting time parameters
 	uint8_t set_time[7];
 	set_time[0] = decToBcd(sec);
 	set_time[1] = decToBcd(min);
 	set_time[2] = decToBcd(hour);
-	set_time[3] = decToBcd(dow);
-	set_time[4] = decToBcd(dom);
+	set_time[3] = decToBcd(dow); //dow is for days of week
+	set_time[4] = decToBcd(dom); //dom is for days of month 
 	set_time[5] = decToBcd(month);
 	set_time[6] = decToBcd(year);
 
 
-	//fill in the address of the RTC, the address of the first register to write anmd the size of each register
+	//fill in the address of the RTC, the address of the first register to write and the size of each register
 	//The function and RTC supports multiwrite. That means we can give the function a buffer and first address
 	//and it will write 1 byte of data, increment the register address, write another byte and so on
 	HAL_I2C_Mem_Write(&hi2c1, DS3231_ADDRESS, 0x00, 1, set_time, 7, 1000);
@@ -432,13 +432,13 @@ void getTime (void)
 
 	uint8_t get_time[7];
 
-	//fill in the address of the RTC, the address of the first register to write anmd the size of each register
+	//fill in the address of the RTC, the address of the first register to write and the size of each register
 	//The function and RTC supports multiread. That means we can give the function a buffer and first address
 	//and it will read 1 byte of data, increment the register address, write another byte and so on
 	HAL_I2C_Mem_Read(&hi2c1, DS3231_ADDRESS, 0x00, 1, get_time, 7, 1000);
 
 	//YOUR CODE HERE
-
+	//reading time into from module and saving data into time structure
 	time.seconds = bcdToDec(get_time[0]);
 	time.minutes = bcdToDec(get_time[1]);
 	time.hour = bcdToDec(get_time[2]);
@@ -457,8 +457,8 @@ int epochFromTime(TIME time){
 	//It is define above as EPOCH_2022. You can work from that and ignore the effects of leap years/seconds
 
 	//YOUR CODE HERE
-// creating the numbers that will fill the day and time by creating a switch function that will runn though the months starting with january and ending with december and 
-// according to the month number ther number of days in the month is added to days int.
+// creating the numbers that will fill the day and time by creating a switch function that will run though the months starting with january and ending with december 
+// according to the month number the respective number of days in the month is added to days as an int.
 	int day;
 	int months = time.month;
 	//int EPOCH_2022;
@@ -493,7 +493,7 @@ int epochFromTime(TIME time){
 		day = day; // redeclaring day integer 
 	}
 
-	int uet = (time.year)* 31536000 + (time.dayofmonth + day) * 86400 + (time.hour) * 3600 + (time.minutes) * 60 + (time.seconds);  // multipling the time in seconds per the variable 
+	int uet = (time.year)* 31536000 + (time.dayofmonth + day) * 86400 + (time.hour) * 3600 + (time.minutes) * 60 + (time.seconds);  // multiplying the time in seconds per the variable 
 	return EPOCH_2022 + uet; // therefore adding the epoch time and the time since is returned 
 }
 
