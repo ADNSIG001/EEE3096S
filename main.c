@@ -89,7 +89,7 @@ void pause_sec(float x); // pausing for one second
 
 uint8_t decToBcd(int val); // taking in integers to be converted from decimal to binary
 int bcdToDec(uint8_t val); //taking in binary and converting into decimal
-void setTime (uint8_t sec, uint8_t min, uint8_t hour, uint8_t dow, uint8_t dom, uint8_t month, uint8_t year); // setting the time with the stanard format for time including date and years
+void setTime (uint8_t sec, uint8_t min, uint8_t hour, uint8_t dow, uint8_t dom, uint8_t month, uint8_t year); // setting the time with the standard format for time including date and years
 void getTime (void);
 int epochFromTime(TIME time); // the Epoch time created being called 
 
@@ -108,7 +108,7 @@ int main(void){
 
   /* USER CODE BEGIN 1 */
 
-	setTime(00, 00, 12, 6, 22, 1, 22); // the time being set to a given date that will be used to compute the time since the eopch time 
+	setTime(00, 00, 12, 6, 22, 1, 22); // the time being set to a given date that will be used to compute the time since the Epoch time 
 
   /* USER CODE END 1 */
 
@@ -415,7 +415,7 @@ void setTime (uint8_t sec, uint8_t min, uint8_t hour, uint8_t dow, uint8_t dom, 
 	set_time[6] = decToBcd(year);
 
 
-	//fill in the address of the RTC, the address of the first register to write anmd the size of each register
+	//fill in the address of the RTC, the address of the first register to write and the size of each register
 	//The function and RTC supports multiwrite. That means we can give the function a buffer and first address
 	//and it will write 1 byte of data, increment the register address, write another byte and so on
 	HAL_I2C_Mem_Write(&hi2c1, DS3231_ADDRESS, 0x00, 1, set_time, 7, 1000);
@@ -432,7 +432,7 @@ void getTime (void)
 
 	uint8_t get_time[7];
 
-	//fill in the address of the RTC, the address of the first register to write anmd the size of each register
+	//fill in the address of the RTC, the address of the first register to write and the size of each register
 	//The function and RTC supports multiread. That means we can give the function a buffer and first address
 	//and it will read 1 byte of data, increment the register address, write another byte and so on
 	HAL_I2C_Mem_Read(&hi2c1, DS3231_ADDRESS, 0x00, 1, get_time, 7, 1000);
@@ -493,7 +493,7 @@ int epochFromTime(TIME time){
 		day = day; // redeclaring day integer 
 	}
 
-	int uet = (time.year)* 31536000 + (time.dayofmonth + day) * 86400 + (time.hour) * 3600 + (time.minutes) * 60 + (time.seconds);  // multipling the time in seconds per the variable 
+	int uet = (time.year)* 31536000 + (time.dayofmonth + day) * 86400 + (time.hour) * 3600 + (time.minutes) * 60 + (time.seconds);  // multiplying the time in seconds per the variable 
 	return EPOCH_2022 + uet; // therefore adding the epoch time and the time since is returned 
 }
 
